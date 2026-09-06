@@ -1,0 +1,472 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/*
+  AllNewspaperBangla — premium editorial design system.
+  Tailwind v4: theme tokens defined here generate utilities (bg-paper, text-ink,
+  border-line, bg-accent, font-bangla, rounded-card, etc.).
+*/
+@theme {
+  /* surfaces — clean white newspaper aesthetic */
+  --color-paper: #ffffff; /* page canvas — pure white */
+  --color-surface: #ffffff; /* cards */
+  --color-band: #f6f7f8; /* very light grey section separation */
+  --color-ink: #14151a; /* near-black, neutral */
+  --color-ink-soft: #383b44;
+  --color-muted: #656a73; /* secondary text */
+  --color-faint: #99a0ab;
+  --color-line: #e7e8ec; /* hairline borders */
+  --color-line-strong: #d6d8de;
+
+  /* footer — a solid grey slab that closes the page off from the white canvas */
+  --color-footer: #d9d9d9;
+  --color-footer-line: #bcbcc0; /* dividers that stay visible on the grey */
+
+  /* brand accent — single refined red, used sparingly */
+  --color-accent: #c8102e;
+  --color-accent-dark: #9c0c23;
+  --color-accent-soft: #fbe9ec;
+  --color-accent-ring: #f4c2ca;
+
+  /* fonts (bound to next/font CSS variables in layout.tsx) */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --font-bangla: var(--font-hind), var(--font-inter), sans-serif;
+
+  /* radii */
+  --radius-card: 14px;
+  --radius-tile: 12px;
+
+  /* motion */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* ------------------------------------------------------------------------
+     Admin panel design system (`a-` prefix).
+     Deliberately cooler and denser than the public editorial theme: a dark
+     command rail against a soft neutral canvas, hairline borders and shadows
+     that stay under 6% opacity so cards read as paper, not plastic.
+     ------------------------------------------------------------------------ */
+
+  /* canvas + paper */
+  --color-a-canvas: #f4f5f7;
+  --color-a-surface: #ffffff;
+  --color-a-sunken: #fafbfc;
+  --color-a-line: #e5e8ed;
+  --color-a-line-soft: #eef0f4;
+
+  /* text */
+  --color-a-ink: #12141a;
+  --color-a-ink-soft: #3b414d;
+  --color-a-muted: #697180;
+  --color-a-faint: #99a1ae;
+
+  /* navigation rail */
+  --color-a-nav: #101319;
+  --color-a-nav-deep: #0a0c11;
+  --color-a-nav-ink: #e9ecf1;
+  --color-a-nav-muted: #858e9d;
+  --color-a-nav-line: #1e232c;
+  --color-a-nav-hover: #191d26;
+
+  /* semantic */
+  --color-a-ok: #0f855b;
+  --color-a-ok-soft: #e7f6ef;
+  --color-a-warn: #9a6207;
+  --color-a-warn-soft: #fdf3e2;
+  --color-a-info: #1f5fbf;
+  --color-a-info-soft: #eaf1fd;
+
+  /* radii + elevation */
+  --radius-a: 14px;
+  --radius-a-sm: 10px;
+  --shadow-a-card: 0 1px 2px rgba(16, 18, 23, 0.04), 0 1px 3px rgba(16, 18, 23, 0.05);
+  --shadow-a-raised: 0 2px 4px rgba(16, 18, 23, 0.04), 0 8px 20px -6px rgba(16, 18, 23, 0.1);
+  --shadow-a-pop: 0 12px 34px -10px rgba(16, 18, 23, 0.22), 0 2px 8px rgba(16, 18, 23, 0.06);
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.font-bangla {
+  font-family: var(--font-bangla);
+}
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+/* Subtle paper grain that reads as "premium print" without hurting perf. */
+.bg-grain {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(23, 19, 13, 0.035) 1px,
+    transparent 0
+  );
+  background-size: 22px 22px;
+}
+
+/* Focus ring consistent with brand */
+:where(a, button, input, textarea, select):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Reusable animated underline for editorial links */
+.link-underline {
+  background-image: linear-gradient(var(--color-accent), var(--color-accent));
+  background-size: 0% 1.5px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.3s var(--ease-out-soft);
+}
+.link-underline:hover {
+  background-size: 100% 1.5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---------- Shimmer skeleton ---------------------------------------------- */
+
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-band) 0%,
+    var(--color-line) 40%,
+    var(--color-band) 80%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-tile);
+}
+
+/* ---------- macOS window chrome ------------------------------------------- */
+
+.mac-window {
+  border-radius: 14px;
+  background: var(--color-surface);
+  box-shadow:
+    0 25px 80px -20px rgba(0, 0, 0, 0.35),
+    0 0 1px rgba(0, 0, 0, 0.15);
+}
+
+.mac-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--color-line);
+  background: var(--color-band);
+  border-radius: 14px 14px 0 0;
+}
+
+.mac-dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+.mac-dot:hover {
+  filter: brightness(0.85);
+}
+.mac-dot-red {
+  background: #ff5f57;
+}
+.mac-dot-yellow {
+  background: #febc2e;
+}
+.mac-dot-green {
+  background: #28c840;
+}
+
+/* ---------- Modal & backdrop ---------------------------------------------- */
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes modalOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.94) translateY(20px);
+  }
+}
+
+.modal-enter {
+  animation: modalIn 0.35s var(--ease-out-soft) forwards;
+}
+
+.modal-backdrop {
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  background: rgba(23, 19, 13, 0.45);
+}
+
+/* ---------- Blog photo carousel ------------------------------------------- */
+
+.blog-carousel {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;
+}
+.blog-carousel::-webkit-scrollbar {
+  height: 6px;
+}
+.blog-carousel::-webkit-scrollbar-track {
+  background: transparent;
+}
+.blog-carousel::-webkit-scrollbar-thumb {
+  background: var(--color-line-strong);
+  border-radius: 3px;
+}
+.blog-carousel > * {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* ---------- Admin panel --------------------------------------------------- */
+
+/*
+  The panel is written in Bangla, so Hind Siliguri leads the stack and Inter
+  picks up Latin words and numerals. `font-feature-settings` keeps figures
+  tabular, which is what stops stat tiles and tables from jittering.
+*/
+.admin-root {
+  font-family: var(--font-bangla);
+  background-color: var(--color-a-canvas);
+  color: var(--color-a-ink);
+  font-feature-settings: "tnum" 1, "cv05" 1;
+}
+
+.admin-root :where(h1, h2, h3, h4) {
+  letter-spacing: -0.015em;
+}
+
+/* The dark rail gets a faint top-down gradient so it reads as a surface with
+   depth rather than a flat block of near-black. */
+.admin-rail {
+  background:
+    linear-gradient(180deg, var(--color-a-nav) 0%, var(--color-a-nav-deep) 100%);
+}
+
+/* Hairline that fades out at both ends — softer than a full-height border. */
+.admin-rail-edge {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--color-a-nav-line) 12%,
+    var(--color-a-nav-line) 88%,
+    transparent 100%
+  );
+}
+
+/* Active nav item: tinted surface plus an accent marker pinned to the left. */
+.admin-nav-active {
+  background: color-mix(in srgb, var(--color-accent) 16%, transparent);
+  color: #fff;
+}
+.admin-nav-active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 18px;
+  width: 3px;
+  transform: translateY(-50%);
+  border-radius: 0 3px 3px 0;
+  background: var(--color-accent);
+}
+
+/* Sticky translucent topbar. */
+.admin-topbar {
+  background: color-mix(in srgb, var(--color-a-canvas) 82%, transparent);
+  backdrop-filter: saturate(1.6) blur(12px);
+  -webkit-backdrop-filter: saturate(1.6) blur(12px);
+}
+
+/* Inputs share one recipe so every form in the panel lines up. */
+.admin-input {
+  width: 100%;
+  border-radius: var(--radius-a-sm);
+  border: 1px solid var(--color-a-line);
+  background: var(--color-a-surface);
+  padding: 0.625rem 0.8125rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--color-a-ink);
+  outline: none;
+  transition:
+    border-color 0.15s var(--ease-out-soft),
+    box-shadow 0.15s var(--ease-out-soft),
+    background-color 0.15s var(--ease-out-soft);
+}
+.admin-input::placeholder {
+  color: var(--color-a-faint);
+}
+.admin-input:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--color-a-line) 40%, var(--color-a-faint));
+}
+.admin-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 16%, transparent);
+}
+.admin-input[aria-invalid="true"] {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 4%, var(--color-a-surface));
+}
+.admin-input:disabled {
+  background: var(--color-a-sunken);
+  color: var(--color-a-muted);
+  cursor: not-allowed;
+}
+
+/* Native select needs its own chevron once the default arrow is suppressed. */
+select.admin-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23697180' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.25rem;
+}
+
+/* File inputs: the browser default is the single ugliest control in any admin. */
+.admin-file {
+  width: 100%;
+  border-radius: var(--radius-a-sm);
+  border: 1px dashed var(--color-a-line);
+  background: var(--color-a-sunken);
+  padding: 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--color-a-muted);
+  transition: border-color 0.15s var(--ease-out-soft), background-color 0.15s var(--ease-out-soft);
+}
+.admin-file:hover {
+  border-color: var(--color-accent-ring);
+  background: color-mix(in srgb, var(--color-accent) 3%, var(--color-a-sunken));
+}
+.admin-file::file-selector-button {
+  margin-right: 0.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-a-ink);
+  color: #fff;
+  padding: 0.375rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+}
+.admin-file::file-selector-button:hover {
+  background: var(--color-a-ink-soft);
+}
+
+/* Row action buttons stay quiet until the row is hovered or focused. */
+.admin-row .admin-row-actions {
+  opacity: 0;
+  transition: opacity 0.15s var(--ease-out-soft);
+}
+.admin-row:hover .admin-row-actions,
+.admin-row:focus-within .admin-row-actions {
+  opacity: 1;
+}
+@media (hover: none) {
+  .admin-row .admin-row-actions {
+    opacity: 1;
+  }
+}
+
+/* Toast/flash strip. */
+@keyframes adminFlashIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.admin-flash {
+  animation: adminFlashIn 0.28s var(--ease-out-soft);
+}
+
+/* ---------- TipTap rich-text editor --------------------------------------- */
+
+.tiptap:focus {
+  outline: none;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--color-faint);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.tiptap img {
+  max-width: 100%;
+  height: auto;
+}
+
+.tiptap img.ProseMirror-selectednode {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
+.tiptap :first-child {
+  margin-top: 0;
+}
