@@ -140,6 +140,23 @@ export function collectionSchema(opts: {
 }
 
 /**
+ * A Q&A block. Google and the AI answer engines both read this, but only when
+ * the same text is visible on the page — schema that answers a question the
+ * page itself does not answer is a structured-data violation, so this is always
+ * rendered from the same source as the visible <Faq> list.
+ */
+export function faqSchema(items: { q: string; a: string }[]): Json {
+  return {
+    "@type": "FAQPage",
+    mainEntity: items.map((it) => ({
+      "@type": "Question",
+      name: it.q,
+      acceptedAnswer: { "@type": "Answer", text: it.a },
+    })),
+  };
+}
+
+/**
  * Wrap nodes in a single `@graph` document. One script tag per page keeps the
  * cross-references (`@id`) resolvable and is what Google prefers.
  */
