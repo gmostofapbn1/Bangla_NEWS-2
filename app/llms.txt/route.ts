@@ -5,6 +5,19 @@ import { SITE } from "@/lib/site-config";
 export const revalidate = 3600;
 
 /**
+ * Category descriptions are full SEO copy - 150 words each. Whole, they would
+ * bury the structure this file exists to convey, so only the opening sentence
+ * is carried across.
+ */
+function firstSentence(text: string): string {
+  const clean = text.replace(/\s+/g, " ").trim();
+  const end = clean.search(/\.\s/);
+  const first = end === -1 ? clean : clean.slice(0, end + 1);
+  return first.length > 200 ? `${first.slice(0, 197).trimEnd()}...` : first;
+}
+
+
+/**
  * /llms.txt — a plain-language map of the site for answer engines.
  *
  * Generated from the live category list rather than hand-written, so it cannot
@@ -31,7 +44,7 @@ ${name} does not host, republish or paywall any news content. Every entry links 
 
 ## Categories
 
-${main.map((c) => `- [${c.title}](${SITE.url}/category/${c.slug})${c.description ? ` — ${c.description}` : ""}`).join("\n")}
+${main.map((c) => `- [${c.title}](${SITE.url}/category/${c.slug})${c.description ? ` — ${firstSentence(c.description)}` : ""}`).join("\n")}
 
 ## Regional newspapers by division
 
