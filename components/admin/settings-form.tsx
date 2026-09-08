@@ -118,6 +118,14 @@ export function SettingsForm({ settings }: { settings: Settings }) {
               error={fe.primary_color}
               hint="ডিফল্ট রং লাল (#c8102e)। পরিবর্তন করলে পুরো ওয়েবসাইট এবং এই এডমিন প্যানেলের রংও বদলে যাবে।"
             />
+
+            <ColorField
+              name="header_color"
+              label="হেডারের ব্যাকগ্রাউন্ড রং"
+              defaultValue={settings.header_color}
+              error={fe.header_color}
+              hint="উপরের মেনু বারের রং (ডিফল্ট নীল #1B7CC4)। শুধু হেডারেই প্রযোজ্য — বাটন ও লিংকের রং প্রাইমারি রং থেকেই আসবে।"
+            />
           </FormSection>
         </div>
       </Card>

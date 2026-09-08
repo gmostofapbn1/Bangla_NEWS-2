@@ -16,12 +16,15 @@ export function HeaderClient({
   divisions,
   logoSrc,
   siteName,
+  headerColor,
 }: {
   mainCategories: NavCat[];
   divisions: NavCat[];
   /** Branding from Settings → General. */
   logoSrc?: string | null;
   siteName?: string;
+  /** Masthead bar colour from Settings → General. */
+  headerColor: string;
 }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -64,9 +67,14 @@ export function HeaderClient({
 
   return (
     <header
+      // The colour is per-site data, not a design token, so it is applied
+      // inline rather than through Tailwind. Translucency and the backdrop blur
+      // are gone with it: a solid brand bar should not tint to whatever happens
+      // to scroll under it.
+      style={{ backgroundColor: headerColor }}
       className={cn(
-        "sticky top-0 z-50 border-b border-line bg-paper/85 backdrop-blur-md transition-shadow",
-        scrolled && "shadow-[0_1px_0_rgba(23,19,13,0.04),0_8px_24px_-16px_rgba(23,19,13,0.25)]",
+        "sticky top-0 z-50 border-b border-black/10 transition-shadow",
+        scrolled && "shadow-[0_8px_24px_-16px_rgba(0,0,0,0.55)]",
       )}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
@@ -120,7 +128,8 @@ export function HeaderClient({
         <div className="flex items-center gap-2">
           <Link
             href="/submit"
-            className="hidden rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-dark sm:inline-flex sm:items-center sm:gap-1.5"
+            style={{ color: headerColor }}
+            className="hidden rounded-full bg-white px-4 py-2 text-sm font-semibold shadow-sm transition hover:bg-white/90 sm:inline-flex sm:items-center sm:gap-1.5"
           >
             Submit Site
             <ArrowUpRight className="h-4 w-4" />
@@ -130,7 +139,7 @@ export function HeaderClient({
             aria-label="Toggle menu"
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((v) => !v)}
-            className="grid h-10 w-10 place-items-center rounded-lg border border-line bg-surface text-ink lg:hidden"
+            className="grid h-10 w-10 place-items-center rounded-lg border border-white/25 bg-white/10 text-white transition hover:bg-white/20 lg:hidden"
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -139,14 +148,14 @@ export function HeaderClient({
 
       {/* Mobile panel */}
       {mobileOpen && (
-        <div className="border-t border-line bg-paper lg:hidden">
+        <div style={{ backgroundColor: headerColor }} className="border-t border-white/15 lg:hidden">
           <div className="mx-auto max-w-7xl space-y-4 px-4 py-5 sm:px-6">
             <div className="flex flex-col">
               {PRIMARY_NAV.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="border-b border-line/70 py-3 text-[15px] font-medium text-ink"
+                  className="border-b border-white/15 py-3 text-[15px] font-medium text-white/90"
                 >
                   {item.label}
                 </Link>
@@ -159,7 +168,7 @@ export function HeaderClient({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="border-b border-line/70 py-3 text-[15px] font-medium text-ink"
+                  className="border-b border-white/15 py-3 text-[15px] font-medium text-white/90"
                 >
                   {item.label}
                 </Link>
@@ -167,7 +176,8 @@ export function HeaderClient({
             </div>
             <Link
               href="/submit"
-              className="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-accent px-4 py-3 text-sm font-semibold text-white"
+              style={{ color: headerColor }}
+              className="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-white px-4 py-3 text-sm font-semibold"
             >
               Submit Site <ArrowUpRight className="h-4 w-4" />
             </Link>
@@ -197,7 +207,7 @@ function NavLink({
       href={href}
       className={cn(
         "rounded-full px-3.5 py-2 text-sm font-medium transition-colors",
-        active ? "text-accent" : "text-ink-soft hover:text-ink hover:bg-band",
+        active ? "bg-white/15 text-white" : "text-white/85 hover:bg-white/10 hover:text-white",
       )}
     >
       {children}
@@ -224,7 +234,7 @@ function Dropdown({
         aria-expanded={open}
         className={cn(
           "inline-flex items-center gap-1 rounded-full px-3.5 py-2 text-sm font-medium transition-colors",
-          open ? "text-accent bg-band" : "text-ink-soft hover:text-ink hover:bg-band",
+          open ? "bg-white/15 text-white" : "text-white/85 hover:bg-white/10 hover:text-white",
         )}
       >
         {label}

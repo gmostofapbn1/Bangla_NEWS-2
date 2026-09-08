@@ -19,6 +19,10 @@ export const SETTING_SPECS = {
   site_logo: S(""),
   site_favicon: S(""),
   primary_color: S("#c8102e"),
+  // The masthead bar reads as its own brand surface, so it carries a colour of
+  // its own rather than inheriting the accent — the accent stays on buttons,
+  // links and category dots, which would all turn blue if these were one token.
+  header_color: S("#1B7CC4"),
 
   /* SEO */
   meta_title: S(""),

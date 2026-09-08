@@ -20,6 +20,7 @@ export async function SiteHeader() {
       divisions={divisions}
       logoSrc={settings.site_logo || null}
       siteName={settings.site_name}
+      headerColor={settings.header_color}
     />
   );
 }
