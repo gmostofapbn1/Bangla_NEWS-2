@@ -7,7 +7,7 @@ import { canonical } from "@/lib/seo";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  alternates: canonical("/bangla-epaper"),
+  alternates: canonical("/epaper"),
   title: "Bangla ePaper Editions",
   description:
     "Digital replica ePaper editions of the leading Bangla daily newspapers — read the printed paper online.",
