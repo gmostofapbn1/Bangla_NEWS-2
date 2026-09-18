@@ -36,7 +36,7 @@ export default async function BlogPage({
     <>
       <PageHero
         breadcrumb={[{ label: "Home", href: "/" }, { label: "Blog" }]}
-        title="From the Blog"
+        title="Blog Post"
         titleBn="ব্লগ"
         description="News, updates and guides on the Bangla media landscape."
       />
