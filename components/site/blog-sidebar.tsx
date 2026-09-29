@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Newspaper, Eye, Clock, Flame, FolderOpen } from "lucide-react";
-import { formatDate } from "@/lib/utils";
+import { Newspaper, Clock, Flame, FolderOpen } from "lucide-react";
 import type { PostCard } from "@/lib/types";
 import type { CategoryCount } from "@/lib/queries";
 
@@ -25,7 +24,7 @@ export function BlogSidebar({
         <Widget title="Popular Posts" titleBn="জনপ্রিয় পোস্ট" icon={Flame}>
           <ul className="divide-y divide-line">
             {popular.map((p) => (
-              <PostRow key={p.id} post={p} showViews />
+              <PostRow key={p.id} post={p} />
             ))}
           </ul>
         </Widget>
@@ -102,7 +101,8 @@ function Widget({
   );
 }
 
-function PostRow({ post, showViews }: { post: PostCard; showViews?: boolean }) {
+/** Title and thumbnail only — dates and view counts are admin-panel data. */
+function PostRow({ post }: { post: PostCard }) {
   return (
     <li>
       <Link
@@ -127,15 +127,6 @@ function PostRow({ post, showViews }: { post: PostCard; showViews?: boolean }) {
         <div className="min-w-0 flex-1">
           <p className="line-clamp-2 text-[13px] font-semibold leading-snug text-ink transition-colors group-hover:text-accent">
             {post.title}
-          </p>
-          <p className="mt-1 flex items-center gap-2 text-[11px] text-faint">
-            <span>{formatDate(post.published_at ?? post.created_at)}</span>
-            {showViews && (post.click_count ?? 0) > 0 && (
-              <span className="inline-flex items-center gap-0.5">
-                <Eye className="h-3 w-3" />
-                {post.click_count}
-              </span>
-            )}
           </p>
         </div>
       </Link>

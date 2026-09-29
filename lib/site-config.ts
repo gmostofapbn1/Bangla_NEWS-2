@@ -44,20 +44,29 @@ export type GroupKey = keyof typeof GROUPS;
  */
 export const DEFAULT_HOME_LIMIT = 12;
 
+/**
+ * A header link is a fixed path or a category role. Category links name the
+ * group, not the slug: slugs are edited in the admin for SEO, and a slug
+ * written down here went dead the first time the client renamed one.
+ */
+export type NavSpec =
+  | { label: string; href: string }
+  | { label: string; group: GroupKey };
+
 /** Header links shown before the category dropdowns. */
-export const PRIMARY_NAV = [
+export const PRIMARY_NAV: readonly NavSpec[] = [
   { label: "Home", href: "/" },
   { label: "Blog", href: "/blog" },
-  { label: "Bangla ePaper", href: "/epaper" },
-] as const;
+  { label: "Bangla ePaper", group: "epaper" },
+];
 
 /**
  * Header links shown *after* the dropdowns, so they sit to the right of
  * "Local Newspaper" rather than ahead of it.
  */
-export const TRAILING_NAV = [
-  { label: "International Newspaper", href: "/category/international-newspapers" },
-] as const;
+export const TRAILING_NAV: readonly NavSpec[] = [
+  { label: "International Newspaper", group: "international" },
+];
 
 /** Groups surfaced inside the "All Bangla Newspapers" mega-menu. */
 export const NEWSPAPERS_MENU_GROUPS: GroupKey[] = [

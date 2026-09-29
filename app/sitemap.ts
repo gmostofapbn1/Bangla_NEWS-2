@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getAllCategories, getPublishedPosts } from "@/lib/queries";
 import { SITE } from "@/lib/site-config";
+import { divisionsOf } from "@/lib/category-roles";
 
 export const revalidate = 3600;
 
@@ -14,7 +15,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     "",
     "/local",
-    "/epaper",
     "/converter",
     "/blog",
     "/submit",
@@ -35,9 +35,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     }));
 
-  const divRoutes: MetadataRoute.Sitemap = cats
-    .filter((c) => c.parent_slug === "local-newspaper")
-    .map((c) => ({
+  // /epaper is gone from the static list: it now 308s to the ePaper category,
+  // which is already listed below, and a sitemap must not list redirects.
+  const divRoutes: MetadataRoute.Sitemap = divisionsOf(cats).map((c) => ({
       url: `${base}/local/${c.slug}`,
       changeFrequency: "monthly",
       priority: 0.5,

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Globe2, Plus, Pencil, ExternalLink } from "lucide-react";
-import { adminGetCategory, adminListOutletsByCategory } from "@/lib/admin-queries";
+import { adminListCategories, adminListOutletsByCategory } from "@/lib/admin-queries";
+import { categoryForGroup } from "@/lib/category-roles";
 import { OutletGroup } from "@/components/admin/outlet-group";
 import { requireSection } from "@/lib/auth";
 import { hasServiceRole } from "@/lib/env";
@@ -9,13 +10,6 @@ import { Alert, Card, CardHeader, EmptyState, PageHeader, btn } from "@/componen
 
 export const dynamic = "force-dynamic";
 
-/**
- * Migration 0005 creates `international-newspapers`, and the header links to
- * it, so it is the canonical slug. Some databases also carry an older
- * `international-newspaper` row, so both are accepted and whichever exists
- * (preferring the canonical one) is managed here.
- */
-const CANDIDATE_SLUGS = ["international-newspapers", "international-newspaper"] as const;
 const RETURN_TO = "/admin/international";
 
 /**
@@ -26,9 +20,10 @@ const RETURN_TO = "/admin/international";
 export default async function InternationalPage() {
   await requireSection("international");
 
-  const found = await Promise.all(CANDIDATE_SLUGS.map((s) => adminGetCategory(s)));
-  const category = found.find(Boolean) ?? null;
-  const slug = category?.slug ?? CANDIDATE_SLUGS[0];
+  // Found by group, not slug: the client renames slugs for SEO, and this page
+  // went blank the last time a hardcoded one stopped matching.
+  const category = categoryForGroup(await adminListCategories(), "international") ?? null;
+  const slug = category?.slug ?? "";
 
   const outlets = category ? await adminListOutletsByCategory(slug) : [];
   const active = outlets.filter((o) => o.is_active).length;
@@ -64,9 +59,9 @@ export default async function InternationalPage() {
           title="ক্যাটাগরিটি এখনো তৈরি হয়নি"
           description={
             <>
-              <code dir="ltr">{CANDIDATE_SLUGS[0]}</code> নামের ক্যাটাগরিটি ডাটাবেসে পাওয়া যায়নি।
-              মাইগ্রেশন <code dir="ltr">0005</code> চালান, অথবা এই slug দিয়ে নিজেই একটি
-              ক্যাটাগরি তৈরি করুন।
+              গ্রুপ <code dir="ltr">international</code> এর কোনো ক্যাটাগরি পাওয়া যায়নি।
+              একটি ক্যাটাগরি তৈরি করে তার গ্রুপ &ldquo;International Newspapers&rdquo; দিন
+              — slug যা খুশি রাখতে পারেন।
             </>
           }
           action={

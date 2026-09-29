@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { getDivisions, getCategory } from "@/lib/queries";
+import { getAllCategories } from "@/lib/queries";
+import { divisionsOf, regionalHub } from "@/lib/category-roles";
 import { PageHero } from "@/components/site/page-hero";
 import { DivisionTiles } from "@/components/site/division-tiles";
 import { canonical } from "@/lib/seo";
@@ -14,10 +15,9 @@ export const metadata: Metadata = {
 };
 
 export default async function LocalPage() {
-  const [divisions, parent] = await Promise.all([
-    getDivisions(),
-    getCategory("local-newspaper"),
-  ]);
+  const cats = await getAllCategories();
+  const parent = regionalHub(cats);
+  const divisions = divisionsOf(cats);
 
   return (
     <>

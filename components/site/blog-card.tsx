@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Newspaper, Calendar, Eye } from "lucide-react";
-import { formatDate } from "@/lib/utils";
+import { Newspaper } from "lucide-react";
 import type { PostCard } from "@/lib/types";
 
 /** Premium blog card — links to the full article page at /blog/[slug]. */
@@ -28,19 +27,11 @@ export function BlogCard({ post }: { post: PostCard }) {
       </div>
 
       <div className="flex flex-1 flex-col p-5">
-        <div className="flex items-center gap-3 text-xs font-medium uppercase tracking-wide text-faint">
-          <span className="inline-flex items-center gap-1.5">
-            <Calendar className="h-3 w-3" />
-            {formatDate(post.published_at ?? post.created_at)}
-          </span>
-          {(post.click_count ?? 0) > 0 && (
-            <span className="inline-flex items-center gap-1">
-              <Eye className="h-3 w-3" />
-              {post.click_count}
-            </span>
-          )}
-        </div>
-        <h3 className="mt-2.5 font-serif text-lg font-semibold leading-snug text-ink transition-colors group-hover:text-accent">
+        {/* No date or view count: the client wants readership figures seen
+            only in the admin panel, and a visible date makes evergreen
+            directory guides look stale. datePublished stays in the article's
+            JSON-LD, where search engines still read it. */}
+        <h3 className="font-serif text-lg font-semibold leading-snug text-ink transition-colors group-hover:text-accent">
           {post.title}
         </h3>
         {post.excerpt && (

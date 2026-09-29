@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ChevronDown, Menu, X, ArrowUpRight } from "lucide-react";
 import { Logo } from "./logo";
-import { PRIMARY_NAV, TRAILING_NAV } from "@/lib/site-config";
+import type { NavItem } from "@/lib/category-roles";
 import type { Category } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +17,8 @@ export function HeaderClient({
   logoSrc,
   siteName,
   headerColor,
+  primaryNav,
+  trailingNav,
 }: {
   mainCategories: NavCat[];
   divisions: NavCat[];
@@ -25,6 +27,9 @@ export function HeaderClient({
   siteName?: string;
   /** Masthead bar colour from Settings → General. */
   headerColor: string;
+  /** Resolved server-side, so category links follow the slug the admin set. */
+  primaryNav: NavItem[];
+  trailingNav: NavItem[];
 }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -82,7 +87,7 @@ export function HeaderClient({
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-1 lg:flex">
-          {PRIMARY_NAV.map((item) => (
+          {primaryNav.map((item) => (
             <NavLink key={item.href} href={item.href} active={isActive(pathname, item.href)}>
               {item.label}
             </NavLink>
@@ -118,7 +123,7 @@ export function HeaderClient({
             </div>
           </Dropdown>
 
-          {TRAILING_NAV.map((item) => (
+          {trailingNav.map((item) => (
             <NavLink key={item.href} href={item.href} active={isActive(pathname, item.href)}>
               {item.label}
             </NavLink>
@@ -151,7 +156,7 @@ export function HeaderClient({
         <div style={{ backgroundColor: headerColor }} className="border-t border-white/15 lg:hidden">
           <div className="mx-auto max-w-7xl space-y-4 px-4 py-5 sm:px-6">
             <div className="flex flex-col">
-              {PRIMARY_NAV.map((item) => (
+              {primaryNav.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -164,7 +169,7 @@ export function HeaderClient({
             <MobileGroup title="All Bangla Newspapers" items={mainCategories} base="/category" />
             <MobileGroup title="Local Newspaper" items={divisions} base="/local" />
             <div className="flex flex-col">
-              {TRAILING_NAV.map((item) => (
+              {trailingNav.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}

@@ -23,7 +23,7 @@ export function HomeIntro({
       <h1 className="font-serif text-2xl font-semibold leading-tight tracking-tight text-ink sm:text-3xl">
         {siteName} — every newspaper in Bangladesh, in one list
       </h1>
-      <p className="mt-3 max-w-3xl text-[15px] leading-relaxed text-muted">
+      <p className="mt-3 max-w-3xl text-justify hyphens-auto text-[15px] leading-relaxed text-muted">
         A complete newspaper list of Bangladesh: {outletCount} national dailies,
         online news portals, ePapers, magazines, TV news channels, FM radio
         stations and job sites, sorted into {categoryCount} categories and

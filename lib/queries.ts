@@ -6,6 +6,7 @@ import {
 } from "@/lib/seed-data";
 import type { Category, Outlet, HomeSection, Post, PostCard } from "@/lib/types";
 import { DEFAULT_HOME_LIMIT, type GroupKey } from "@/lib/site-config";
+import { divisionsOf, isDirectorySection } from "@/lib/category-roles";
 
 /**
  * Column lists for the public reads.
@@ -153,9 +154,34 @@ export async function getOutletsByCategory(slug: string): Promise<Outlet[]> {
 }
 
 export async function getDivisions(): Promise<Category[]> {
-  return (await getAllCategories())
-    .filter((c) => c.parent_slug === "local-newspaper")
-    .sort((a, b) => a.sort_order - b.sort_order);
+  return divisionsOf(await getAllCategories());
+}
+
+/**
+ * Where a renamed category lives now, or null.
+ *
+ * A trigger records every slug a category has had (migration 0018), so an old
+ * URL — one already in the submitted sitemap, perhaps indexed — can 308 to the
+ * current one instead of 404ing. Only consulted on a miss, so it costs nothing
+ * on the pages people actually hit. Returns null if the table is absent, which
+ * falls through to the ordinary 404.
+ */
+export async function getRenamedCategorySlug(oldSlug: string): Promise<string | null> {
+  const db = supabasePublic();
+  if (!db) return null;
+  try {
+    const { data, error } = await db
+      .from("category_slug_history")
+      .select("categories(slug)")
+      .eq("old_slug", oldSlug)
+      .maybeSingle();
+    if (error) throw error;
+    const cat = (data as { categories: { slug: string } | null } | null)?.categories;
+    return cat?.slug && cat.slug !== oldSlug ? cat.slug : null;
+  } catch (e) {
+    console.warn("[queries] slug history lookup failed:", e);
+    return null;
+  }
 }
 
 export async function getOutletById(id: string): Promise<Outlet | undefined> {
@@ -532,7 +558,7 @@ const fetchOutletCounts = cache(async (): Promise<Map<string, number>> => {
 export async function getCategoriesWithCounts(): Promise<CategoryCount[]> {
   const [cats, counts] = await Promise.all([getAllCategories(), fetchOutletCounts()]);
   return cats
-    .filter((c) => !c.parent_slug && c.slug !== "local-newspaper")
+    .filter(isDirectorySection)
     .sort((a, b) => a.sort_order - b.sort_order)
     .map((c) => ({
       slug: c.slug,

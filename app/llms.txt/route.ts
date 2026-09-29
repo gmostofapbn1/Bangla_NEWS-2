@@ -1,6 +1,7 @@
 import { getAllCategories, getOutletTotal } from "@/lib/queries";
 import { getSiteSettings } from "@/lib/settings";
 import { SITE } from "@/lib/site-config";
+import { categoryForGroup, divisionsOf } from "@/lib/category-roles";
 
 export const revalidate = 3600;
 
@@ -34,7 +35,8 @@ export async function GET() {
 
   const name = s.site_name || SITE.name;
   const main = cats.filter((c) => !c.parent_slug && c.section_type !== "division_grid");
-  const divisions = cats.filter((c) => c.parent_slug === "local-newspaper");
+  const divisions = divisionsOf(cats);
+  const epaper = categoryForGroup(cats, "epaper");
 
   const body = `# ${name}
 
@@ -55,7 +57,7 @@ ${divisions.map((c) => `- [${c.title}](${SITE.url}/local/${c.slug})`).join("\n")
 ## Pages
 
 - [Home](${SITE.url}) — the full list, by category
-- [ePapers](${SITE.url}/epaper) — digital replicas of printed editions
+${epaper ? `- [ePapers](${SITE.url}/category/${epaper.slug})` : ""} — digital replicas of printed editions
 - [Local newspapers](${SITE.url}/local) — by division
 - [Blog](${SITE.url}/blog) — guides and updates on Bangladeshi media
 - [Submit a site](${SITE.url}/submit) — propose a missing outlet

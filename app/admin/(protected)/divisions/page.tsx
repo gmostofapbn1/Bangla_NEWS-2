@@ -3,6 +3,7 @@ import { MapPinned, Plus, Pencil } from "lucide-react";
 import { adminListCategories, adminListOutletsByCategories } from "@/lib/admin-queries";
 import { OutletGroup } from "@/components/admin/outlet-group";
 import { requireSection } from "@/lib/auth";
+import { divisionsOf, regionalHub } from "@/lib/category-roles";
 import { hasServiceRole } from "@/lib/env";
 import { bnNum } from "@/lib/utils";
 import { Alert, Card, EmptyState, PageHeader, btn } from "@/components/admin/ui";
@@ -12,8 +13,8 @@ export const dynamic = "force-dynamic";
 const RETURN_TO = "/admin/divisions";
 
 /**
- * বিভাগীয় পত্রিকা — the eight divisions are categories parented to
- * "local-newspaper". This is a focused view of the same outlet rows the main
+ * বিভাগীয় পত্রিকা — the eight divisions are categories parented to the
+ * regional hub (found by section type, since its slug is editable). This is a focused view of the same outlet rows the main
  * list holds, grouped one division per block so regional papers are managed
  * without scrolling past every national daily.
  */
@@ -21,9 +22,7 @@ export default async function DivisionsPage() {
   await requireSection("divisions");
 
   const categories = await adminListCategories();
-  const divisions = categories
-    .filter((c) => c.parent_slug === "local-newspaper")
-    .sort((a, b) => a.sort_order - b.sort_order);
+  const divisions = divisionsOf(categories);
 
   // Fetch only the divisional outlets rather than the whole table.
   const byCategory = await adminListOutletsByCategories(divisions.map((d) => d.slug));
@@ -60,7 +59,7 @@ export default async function DivisionsPage() {
         <EmptyState
           icon={MapPinned}
           title="কোনো বিভাগ পাওয়া যায়নি"
-          description="বিভাগ তৈরি করতে একটি ক্যাটাগরি বানিয়ে তার প্যারেন্ট slug হিসেবে local-newspaper দিন।"
+          description={`বিভাগ তৈরি করতে একটি ক্যাটাগরি বানিয়ে তার প্যারেন্ট slug হিসেবে ${regionalHub(categories)?.slug ?? "আঞ্চলিক ক্যাটাগরির slug"} দিন।`}
           action={
             <Link href="/admin/categories/new" className={btn.primary}>
               <Plus className="h-4 w-4" /> নতুন বিভাগ

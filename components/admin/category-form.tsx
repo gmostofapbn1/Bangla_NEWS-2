@@ -115,7 +115,7 @@ export function CategoryForm({ category }: { category: Category | null }) {
               name="parent_slug"
               dir="ltr"
               defaultValue={category?.parent_slug}
-              hint="বিভাগীয় পত্রিকার জন্য local-newspaper। শীর্ষ পর্যায়ের ক্যাটাগরি হলে ফাঁকা রাখুন।"
+              hint="বিভাগীয় পত্রিকার জন্য আঞ্চলিক (Regional) ক্যাটাগরির slug দিন। শীর্ষ পর্যায়ের ক্যাটাগরি হলে ফাঁকা রাখুন। প্যারেন্টের slug বদলালে এটি নিজে থেকেই আপডেট হবে।"
               placeholder=""
             />
             <Field

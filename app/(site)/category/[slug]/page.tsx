@@ -1,10 +1,11 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound, permanentRedirect, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import {
   getAllCategories,
   getCategory,
   getOutletsByCategory,
   getDefaultOpenExternal,
+  getRenamedCategorySlug,
 } from "@/lib/queries";
 import { PageHero } from "@/components/site/page-hero";
 import { JsonLd } from "@/components/site/json-ld";
@@ -41,7 +42,13 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 export default async function CategoryPage({ params }: Params) {
   const { slug } = await params;
   const category = await getCategory(slug);
-  if (!category) notFound();
+  if (!category) {
+    // A slug the client has since renamed: forward the old, possibly indexed
+    // URL to where the category lives now rather than 404ing it.
+    const moved = await getRenamedCategorySlug(slug);
+    if (moved) permanentRedirect(`/category/${moved}`);
+    notFound();
+  }
   if (category.section_type === "division_grid") redirect("/local");
 
   const [outlets, globalOpenExternal] = await Promise.all([

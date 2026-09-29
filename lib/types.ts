@@ -8,7 +8,7 @@ export interface Category {
   title_bn?: string | null;
   description?: string | null;
   section_type: SectionType;
-  /** Divisions point to their parent ("local-newspaper"). */
+  /** Divisions point to the regional hub's slug; renames cascade (0018). */
   parent_slug?: string | null;
   group: GroupKey;
   sort_order: number;
