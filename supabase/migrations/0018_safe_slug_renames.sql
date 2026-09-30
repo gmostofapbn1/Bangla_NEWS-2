@@ -60,7 +60,11 @@ create policy "slug history is public" on public.category_slug_history
   for select using (true);
 
 create or replace function public.record_category_slug_change()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql
+-- Everything below is schema-qualified; an empty search_path means nothing
+-- a caller puts on theirs can shadow it.
+set search_path = ''
+as $$
 begin
   if new.slug is distinct from old.slug then
     insert into public.category_slug_history (old_slug, category_id)

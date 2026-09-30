@@ -269,3 +269,48 @@ create policy "public read logos" on storage.objects
 drop policy if exists "public read media" on storage.objects;
 create policy "public read media" on storage.objects
   for select using (bucket_id = 'media');
+
+-- ---------- slug renames are safe ------------------------------------------
+-- parent_slug is a real foreign key that follows its parent's renames, and
+-- every slug a category has had is kept so its old URL can 308 to the new one.
+
+alter table public.categories
+  drop constraint if exists categories_parent_slug_fkey;
+alter table public.categories
+  add constraint categories_parent_slug_fkey
+  foreign key (parent_slug) references public.categories(slug)
+  on update cascade on delete set null;
+
+create table if not exists public.category_slug_history (
+  old_slug    text primary key,
+  category_id uuid not null references public.categories(id) on delete cascade,
+  renamed_at  timestamptz not null default now()
+);
+
+alter table public.category_slug_history enable row level security;
+drop policy if exists "slug history is public" on public.category_slug_history;
+create policy "slug history is public" on public.category_slug_history
+  for select using (true);
+
+create or replace function public.record_category_slug_change()
+returns trigger language plpgsql
+-- Everything below is schema-qualified; an empty search_path means nothing
+-- a caller puts on theirs can shadow it.
+set search_path = ''
+as $$
+begin
+  if new.slug is distinct from old.slug then
+    insert into public.category_slug_history (old_slug, category_id)
+    values (old.slug, old.id)
+    on conflict (old_slug) do update
+      set category_id = excluded.category_id, renamed_at = now();
+    -- The new slug is live; it must not also act as a redirect.
+    delete from public.category_slug_history where old_slug = new.slug;
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists categories_slug_history on public.categories;
+create trigger categories_slug_history
+  after update of slug on public.categories
+  for each row execute function public.record_category_slug_change();
