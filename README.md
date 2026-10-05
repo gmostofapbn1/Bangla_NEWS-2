@@ -1,6 +1,6 @@
 <div align="center">
 
-# 📰 AllNewspaperBangla
+# 📰 Allbanglanewspaper
 
 ### The fastest, most complete directory of Bangla media on the web.
 
