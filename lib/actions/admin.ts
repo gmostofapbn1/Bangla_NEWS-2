@@ -175,7 +175,7 @@ async function uploadLogoIfPresent(formData: FormData): Promise<string | null> {
   const path = `${Date.now()}-${slugify(file.name.replace(/\.[^.]+$/, ""))}.${ext}`;
   const { error } = await sb.storage
     .from(LOGO_BUCKET)
-    .upload(path, file, { contentType: file.type || undefined, upsert: true });
+    .upload(path, file, { contentType: file.type || undefined, upsert: true, cacheControl: "31536000" }); // names are timestamped, never rewritten
   if (error) throw error;
   return sb.storage.from(LOGO_BUCKET).getPublicUrl(path).data.publicUrl;
 }

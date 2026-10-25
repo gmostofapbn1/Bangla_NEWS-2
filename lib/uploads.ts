@@ -61,7 +61,7 @@ export async function uploadImageField(
 
   const { error } = await sb.storage
     .from(BUCKET)
-    .upload(path, file, { contentType: file.type, upsert: true });
+    .upload(path, file, { contentType: file.type, upsert: true, cacheControl: "31536000" }); // names are timestamped, never rewritten
   if (error) throw error;
 
   return sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;

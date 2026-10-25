@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     const path = `blog/${Date.now()}-${base}.${ext}`;
     const { error } = await sb.storage
       .from(MEDIA_BUCKET)
-      .upload(path, file, { contentType: file.type, upsert: true });
+      .upload(path, file, { contentType: file.type, upsert: true, cacheControl: "31536000" }); // names are timestamped, never rewritten
     if (error) throw error;
     const url = sb.storage.from(MEDIA_BUCKET).getPublicUrl(path).data.publicUrl;
     return NextResponse.json({ url });
