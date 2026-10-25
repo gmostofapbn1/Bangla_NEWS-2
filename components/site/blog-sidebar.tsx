@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { optimizable } from "@/lib/image-src";
 import { Newspaper, Clock, Flame, FolderOpen } from "lucide-react";
 import type { PostCard } from "@/lib/types";
 import type { CategoryCount } from "@/lib/queries";
@@ -113,6 +114,7 @@ function PostRow({ post }: { post: PostCard }) {
           {post.cover_image ? (
             <Image
               src={post.cover_image}
+              unoptimized={!optimizable(post.cover_image)}
               alt={post.title}
               fill
               sizes="80px"

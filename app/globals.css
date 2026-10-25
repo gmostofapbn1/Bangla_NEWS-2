@@ -2,6 +2,36 @@
 @plugin "@tailwindcss/typography";
 
 /*
+  Homepage outlet tile. The same utilities as before, applied once here rather
+  than spelled out on each of ~200 tiles: every byte of tile markup is stored
+  three times per cached homepage, and cache storage is billed per 8 KB.
+  `group` stays in the markup - it is a marker for group-hover, not a style.
+*/
+@layer components {
+  .tile {
+    @apply relative flex h-[88px] w-full flex-col overflow-hidden rounded-lg border border-line bg-surface transition duration-200 hover:border-accent-ring hover:shadow-sm;
+  }
+  .tile-badge {
+    @apply absolute left-1 top-1 z-10 rounded bg-accent px-1 py-px text-[7px] font-bold uppercase tracking-wider text-white;
+  }
+  .tile-logo {
+    @apply h-[68px] w-full shrink-0;
+  }
+  .tile-foot {
+    @apply flex flex-1 items-center justify-center border-t border-line px-1.5;
+  }
+  .tile-name {
+    @apply truncate text-[9.5px] font-semibold leading-none text-ink transition-colors group-hover:text-accent;
+  }
+  .logo-box {
+    @apply flex h-full w-full items-center justify-center bg-white;
+  }
+  .logo-img {
+    @apply max-h-full max-w-full object-contain;
+  }
+}
+
+/*
   AllNewspaperBangla — premium editorial design system.
   Tailwind v4: theme tokens defined here generate utilities (bg-paper, text-ink,
   border-line, bg-accent, font-bangla, rounded-card, etc.).

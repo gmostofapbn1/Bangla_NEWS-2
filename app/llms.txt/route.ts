@@ -3,7 +3,7 @@ import { getSiteSettings } from "@/lib/settings";
 import { SITE } from "@/lib/site-config";
 import { categoryForGroup, divisionsOf } from "@/lib/category-roles";
 
-export const revalidate = 3600;
+export const revalidate = 604800; // a week; admin edits refresh on demand
 
 /**
  * Category descriptions are full SEO copy - 150 words each. Whole, they would

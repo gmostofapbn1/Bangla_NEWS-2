@@ -2,7 +2,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { getAllCategories } from "@/lib/queries";
 import { categoryForGroup } from "@/lib/category-roles";
 
-export const revalidate = 3600;
+export const revalidate = 604800; // a week; admin edits refresh on demand
 
 /**
  * /epaper predates the ePaper category having an editable URL of its own. It

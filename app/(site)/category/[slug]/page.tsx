@@ -17,7 +17,7 @@ import {
 } from "@/lib/seo";
 import { CategoryFilter } from "@/components/site/category-filter";
 
-export const revalidate = 3600;
+export const revalidate = 604800; // a week; admin edits refresh on demand
 
 type Params = { params: Promise<{ slug: string }> };
 

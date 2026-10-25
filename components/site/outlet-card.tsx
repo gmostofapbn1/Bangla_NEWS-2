@@ -35,27 +35,31 @@ export function OutletCard({
 }) {
   const handle = outlet.slug ?? outlet.id;
   const external = outlet.open_external || shouldOpenExternal;
+  // OutletLogo is a client component, so its props are serialised into the
+  // page payload once per tile. Passing the whole outlet row shipped every
+  // column ~200 times; it reads only these three.
+  const logoProps = { name: outlet.name, logo_url: outlet.logo_url, url: outlet.url };
 
   // Homepage tile: 88px box with a 68px logo frame; the name sits in the strip
   // below. Width comes from the grid track (six per row on desktop).
+  // The compact tile's utilities live in globals.css (.tile*): the homepage
+  // repeats this markup ~200 times and every byte of it is stored three times
+  // per cached page (HTML, inline RSC, .rsc), so the long class lists were a
+  // third of what each homepage refresh wrote.
   const className = compact
-    ? "group relative flex h-[88px] w-full flex-col overflow-hidden rounded-lg border border-line bg-surface transition duration-200 hover:border-accent-ring hover:shadow-sm"
+    ? "group tile"
     : "group relative flex flex-col border-b border-r border-line bg-surface transition duration-200 hover:z-10 hover:ring-1 hover:ring-accent-ring";
 
   const body = compact ? (
     <>
       {outlet.is_featured && (
-        <span className="absolute left-1 top-1 z-10 rounded bg-accent px-1 py-px text-[7px] font-bold uppercase tracking-wider text-white">
-          Top
-        </span>
+        <span className="tile-badge">Top</span>
       )}
-      <div className="h-[68px] w-full shrink-0">
-        <OutletLogo outlet={outlet} compact />
+      <div className="tile-logo">
+        <OutletLogo outlet={logoProps} compact />
       </div>
-      <div className="flex flex-1 items-center justify-center border-t border-line px-1.5">
-        <p className="truncate text-[9.5px] font-semibold leading-none text-ink transition-colors group-hover:text-accent">
-          {outlet.name}
-        </p>
+      <div className="tile-foot">
+        <p className="tile-name">{outlet.name}</p>
       </div>
     </>
   ) : (
@@ -68,7 +72,7 @@ export function OutletCard({
 
       {/* Logo panel */}
       <div className="flex aspect-[16/10] items-center justify-center bg-white p-3">
-        <OutletLogo outlet={outlet} />
+        <OutletLogo outlet={logoProps} />
       </div>
 
       {/* Name */}
@@ -100,7 +104,9 @@ export function OutletCard({
   }
 
   return (
-    <Link href={`/read/${handle}`} className={className}>
+    // No prefetch: the reader is rendered per request, so prefetching would
+    // run a server render for every tile scrolled past, not just the one clicked.
+    <Link href={`/read/${handle}`} prefetch={false} className={className}>
       {body}
     </Link>
   );

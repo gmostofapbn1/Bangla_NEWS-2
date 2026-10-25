@@ -27,10 +27,7 @@ export function OutletLogo({
   if (src && !failed) {
     return (
       <div
-        className={cn(
-          "flex h-full w-full items-center justify-center bg-white",
-          compact ? "p-2" : "p-4",
-        )}
+        className={compact ? "logo-box p-2" : "logo-box p-4"}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -40,7 +37,7 @@ export function OutletLogo({
           onError={() => setFailed(true)}
           className={
             outlet.logo_url || compact
-              ? "max-h-full max-w-full object-contain"
+              ? "logo-img"
               : "max-h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
           }
         />

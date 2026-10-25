@@ -3,7 +3,7 @@ import { getSiteSettings } from "@/lib/settings";
 import { ContentPage } from "@/components/site/content-page";
 import { canonical } from "@/lib/seo";
 
-export const revalidate = 3600;
+export const revalidate = 604800; // a week; admin edits refresh on demand
 
 export async function generateMetadata(): Promise<Metadata> {
   const s = await getSiteSettings();

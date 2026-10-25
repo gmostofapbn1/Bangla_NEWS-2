@@ -3,7 +3,9 @@ import { getAllCategories, getPublishedPosts } from "@/lib/queries";
 import { SITE } from "@/lib/site-config";
 import { divisionsOf } from "@/lib/category-roles";
 
-export const revalidate = 3600;
+// Small (a few KB) and the one file Google re-reads to find new posts, so it
+// keeps a daily refresh as well as the on-demand one from the admin.
+export const revalidate = 86400;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = SITE.url;

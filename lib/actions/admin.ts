@@ -83,11 +83,23 @@ function collectFieldErrors(
  *
  * So: purge the whole tree only for changes that genuinely affect every page,
  * and otherwise touch just the pages that actually show the changed row.
+ *
+ * CACHE POLICY. Public pages keep a one-week `revalidate` as a safety net only.
+ * Every write the admin can make refreshes the pages it affects, here, so a
+ * timer adds nothing but cost: it re-renders and re-stores an unchanged page
+ * every time it lapses and someone - often a crawler - requests it. The home
+ * page is ~900 KB per stored copy (HTML plus RSC payload), and stored copies are
+ * billed per 8 KB, so the timers were the bulk of the hosting quota. What a
+ * timer still covers: view-count ordering in "popular posts", and edits made
+ * directly in the Supabase dashboard (save Settings once to push those live).
  */
 
 /** Everything — for changes that alter the shared header, footer or branding. */
 function refreshEverything() {
   revalidatePath("/", "layout");
+  // Route handlers render outside the layout tree, so name them explicitly.
+  revalidatePath("/sitemap.xml");
+  revalidatePath("/llms.txt");
 }
 
 /**
@@ -107,6 +119,8 @@ function refreshPosts(slug?: string | null) {
   revalidatePath("/");
   revalidatePath("/blog");
   if (slug) revalidatePath(`/blog/${slug}`);
+  // New and renamed posts reach Google through the sitemap.
+  revalidatePath("/sitemap.xml");
 }
 
 /**
@@ -191,6 +205,7 @@ export async function upsertOutlet(
   const data = parsed.data;
   const sb = supabaseAdmin();
 
+  let previousCategory: string | null = null;
   try {
     const { data: cat, error: catErr } = await sb
       .from("categories")
@@ -243,6 +258,15 @@ export async function upsertOutlet(
     }
 
     if (id) {
+      // The category it is leaving needs refreshing too, or the outlet would
+      // keep showing there until that page's cache lapsed.
+      const { data: before } = await sb
+        .from("outlets")
+        .select("categories(slug)")
+        .eq("id", id)
+        .maybeSingle();
+      previousCategory =
+        (before as { categories: { slug: string } | null } | null)?.categories?.slug ?? null;
       const { error } = await sb.from("outlets").update(row).eq("id", id);
       if (error) throw error;
     } else {
@@ -255,6 +279,7 @@ export async function upsertOutlet(
   }
 
   refreshOutlet(data.category_slug);
+  if (previousCategory && previousCategory !== data.category_slug) refreshOutlet(previousCategory);
   redirect(returnTo(formData, "/admin/outlets"));
 }
 

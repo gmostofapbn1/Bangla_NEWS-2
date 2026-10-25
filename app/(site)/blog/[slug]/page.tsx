@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
+import { optimizable } from "@/lib/image-src";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ChevronRight } from "lucide-react";
@@ -21,7 +22,7 @@ import { getSiteSettings } from "@/lib/settings";
 import { JsonLd } from "@/components/site/json-ld";
 import { articleSchema, breadcrumbSchema, canonical, jsonLdGraph } from "@/lib/seo";
 
-export const revalidate = 300;
+export const revalidate = 604800; // a week; admin edits refresh on demand
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -140,6 +141,7 @@ export default async function PostPage({ params }: Params) {
               <div className="relative mt-6 aspect-[16/9] w-full overflow-hidden rounded-2xl border border-line bg-band">
                 <Image
                   src={post.cover_image}
+                  unoptimized={!optimizable(post.cover_image)}
                   alt={post.title}
                   fill
                   sizes="(max-width: 1024px) 100vw, 700px"

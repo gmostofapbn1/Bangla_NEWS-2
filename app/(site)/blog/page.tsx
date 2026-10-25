@@ -5,7 +5,7 @@ import { BlogGrid } from "@/components/site/blog-grid";
 import { Pagination } from "@/components/site/pagination";
 import { canonical } from "@/lib/seo";
 
-export const revalidate = 300;
+export const revalidate = 604800; // a week; admin edits refresh on demand
 
 /** 9 fills the 3-column grid exactly, so no half-empty last row. */
 const PER_PAGE = 9;
